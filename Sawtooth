@@ -1,0 +1,7 @@
+ from pyo import *
+ s = Server().boot()
+ s.start()
+ a = Input(0,1,0)
+ yin = Yin(a,tolerance=0.2,minfreq=60,maxfreq=1500,cutoff=1500,winsize=1024,mul=1,add=0)
+ wave = SuperSaw(freq=yin,detune=0.5,bal=0.7,mul=1,add=0).out()
+ s.gui()
