@@ -1,0 +1,7 @@
+ from pyo import *
+ s = Server(duplex=1).boot()
+ s.start()
+ a = Input(0,1,0)
+ fq = Yin(a,tolerance=0.2,winsize=1024,mul=1,add=0)
+ wave = Sine(freq=fq,phase=0,mul=1,add=0).out()
+ s.gui()
