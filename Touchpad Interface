@@ -1,0 +1,64 @@
+# set up the colors
+BLACK = (  0,   0,   0)
+WHITE = (255, 255, 255)import pygame, sys, os, time
+from pygame.locals import *
+from evdev import InputDevice, list_devices
+
+devices = map(InputDevice, list_devices())
+eventX=""
+for dev in devices:
+    if dev.name == "ADS7843 Touchscreen":
+        eventX = dev.fn
+print eventX
+
+os.environ["SDL_FBDEV"] = "/dev/fb1"
+os.environ["SDL_MOUSEDRV"] = "TSLIB"
+os.environ["SDL_MOUSEDEV"] = eventX
+
+pygame.init()
+RED   = (255,   0,   0)
+GREEN = (  0, 255,   0)
+BLUE  = (  0,   0, 255)
+CYAN  = (  0, 255, 255)
+MAGENTA=(255,   0, 255)
+YELLOW =(255, 255,   0)
+
+# set up the window
+screen = pygame.display.set_mode((480,320), 0, 32)
+pygame.display.set_caption('Drawing')
+
+# set up blue square cursor
+class Circle(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((20,20))
+        self.image.fill(BLUE)
+        self.rect = self.image.get_rect()
+
+    def update(self):
+        self.rect.center = pygame.mouse.get_pos()
+
+# import Logo image, scale and post to screen
+logo = pygame.image.load(os.path.join('MRG Logo.png'))
+logo = pygame.transform.scale(logo,(480,320))
+logo = logo.convert()   
+screen.blit(logo, (0, 0))
+
+# create blue square cursor and hide mouse cursor
+circle = Circle()
+allSprites = pygame.sprite.Group(circle)
+pygame.mouse.set_visible(False)
+
+running = True
+while running: # run the game loop
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+            running = False
+	allSprites.clear(screen,logo)
+	allSprites.update()
+	allSprites.draw(screen)
+        if event.type == KEYDOWN and event.key == K_ESCAPE:
+            running = False
+    pygame.display.update()
